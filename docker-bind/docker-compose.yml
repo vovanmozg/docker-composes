@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  bind:
+    image: sameersbn/bind:9.11.3-20190706
+    container_name: bind
+    restart: always
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+      - "127.0.0.1:10000:10000/tcp"
+    volumes:
+      - ./data:/data
+  
