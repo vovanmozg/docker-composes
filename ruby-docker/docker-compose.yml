@@ -1,0 +1,12 @@
+version: "3"
+services:
+  ruby-docker:
+    image: vovan/ruby-docker
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: ruby-docker
+    volumes:
+      - ./src:/usr/src/app
+    environment:
+      - BUNDLE
