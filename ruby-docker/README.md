@@ -23,9 +23,15 @@ cd ruby-docker
 ``` 
 docker-compose up
 ```
-
-### Update Gemfile
+### Modify
+``` 
+# ... edit src/run.rb
+docker-compose up
 ```
+
+### Add gems to Gemfile
+```
+# ... edit Gemfile
 # Update Gemfile.lock
 BUNDLE=1 docker-compose up
 # Rebuild image
