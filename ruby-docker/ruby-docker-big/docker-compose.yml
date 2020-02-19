@@ -1,0 +1,12 @@
+version: "3"
+services:
+  ruby-docker:
+    image: vovan/ruby-docker-big
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: ruby-docker-big
+    volumes:
+      - ./src:/usr/src/app
+    environment:
+      - BUNDLE
