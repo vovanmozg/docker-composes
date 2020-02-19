@@ -4,14 +4,6 @@ Develop and run Ruby script in docker container without unnecessary rebuilds
 
 ## Getting Started
 
-
-### Prerequisites
-
-```
-Docker
-Docker Compose
-```
-
 ### Installing
 
 ```
@@ -37,6 +29,16 @@ BUNDLE=1 docker-compose up
 # Rebuild image
 docker-compose up --build
 ```
+
+## Prerequisites
+
+```
+Docker
+Docker Compose
+```
+
+## References
+https://hub.docker.com/_/ruby
 
 ## Contributing
 

@@ -1,10 +1,9 @@
-FROM ruby:2.7-alpine
+FROM ruby:2.6-alpine
 
 WORKDIR /usr/src/app
 
-#COPY ./src/Gemfile ./
-#COPY ./src/Gemfile.lock ./
 COPY ./src .
+RUN gem install bundler
 RUN bundle install
 
 ENV BUNDLE=0
