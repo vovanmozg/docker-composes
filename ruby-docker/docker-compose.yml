@@ -5,7 +5,6 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    container_name: ruby-docker
     volumes:
       - ./src:/usr/src/app
     environment:
