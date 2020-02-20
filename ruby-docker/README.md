@@ -4,6 +4,15 @@ Develop and run Ruby script in docker container without unnecessary rebuilds
 
 ## Getting Started
 
+### Quick Start
+
+```
+cd workdir
+wget https://raw.githubusercontent.com/vovanmozg/docker-composes/master/ruby-docker/dockerize.sh && chmod +x ./dockerize.sh && ./dockerize.sh
+docker-compose up
+
+```
+
 ### Installing
 
 ```
