@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+  memcached:
+    image: docker.io/bitnami/memcached:1
+    ports:
+      - '11211:11211'
+    environment:
+      - MEMCACHED_CACHE_SIZE=128
