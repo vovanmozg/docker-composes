@@ -1,0 +1,21 @@
+services:
+  fish-speech:
+    image: fishaudio/fish-speech
+    container_name: fish-speech
+
+    ports:
+      - "7860:7860"
+
+    volumes:
+      - "./data:/exp"
+
+    # environment:
+    #   PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
