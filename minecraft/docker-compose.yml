@@ -1,0 +1,7 @@
+version: '3'
+services:
+  mcserver: 
+    container_name: mcserver
+    ports:
+    - 25565
+    image: itzg/minecraft-server
