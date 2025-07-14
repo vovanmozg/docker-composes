@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  stt:
+    build: .
+    devices:
+      - "/dev/snd:/dev/snd"  # доступ к аудиоустройству
+    environment:
+      - PYTHONUNBUFFERED=1
+    stdin_open: true
+    tty: true
