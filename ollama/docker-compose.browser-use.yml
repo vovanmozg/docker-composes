@@ -1,6 +1,6 @@
 services:
   browser-use:
-    image: vovan/browser-use
+    image: vovan/browser-use:latest
     container_name: browser-use
     environment:
       - OPENAI_API_KEY=${OPENAI_BROWSER_USE_KEY}
@@ -11,3 +11,5 @@ services:
       - '5900:5900'
     depends_on:
       - ollama
+    volumes:
+      - /home/vp/pro/browser-use-docker:/app

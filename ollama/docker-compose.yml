@@ -5,6 +5,8 @@ services:
     image: ollama/ollama
     ports:
       - 11434:11434
+    environment:
+      - CUDA_ERROR_LEVEL=50
     volumes:
       - ollama:/root/.ollama
     container_name: ollama

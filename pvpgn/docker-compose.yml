@@ -1,0 +1,13 @@
+services:
+  pvpgn-server:
+    image: wwmoraes/pvpgn-server:latest
+    container_name: pvpgn_server
+    ports:
+      - "6112:6112"    # Порт Battle.net
+      - "4000:4000"    # Порт игрового сервера
+    volumes:
+      - ./etc:/usr/local/pvpgn/etc  # Конфигурационные файлы
+      - ./var:/usr/local/pvpgn/var  # Данные и логи
+    restart: unless-stopped
+    user: "1000:1000"              # Использование непривилегированного пользователя
+    command: bnetd                 # Запуск основного процесса PvPGN
