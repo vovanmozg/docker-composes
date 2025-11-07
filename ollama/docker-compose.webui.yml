@@ -8,9 +8,9 @@ services:
     ports:
       - "3001:8080"
     volumes:
-      - open-webui:/app/backend/data
+      - ./open-webui:/app/backend/data
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-volumes:
-  open-webui:
+#volumes:
+#  open-webui:

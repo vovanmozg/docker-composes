@@ -1,3 +1,5 @@
 docker-bind/data
 .idea
 ollama/open-webui
+ollama/open-webui1
+pgadmin/pgadmin

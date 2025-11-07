@@ -7,5 +7,5 @@ services:
             - 55555
         volumes:
             - './sync:/mnt/sync'
-        restart: on-failure
+#        restart: on-failure
         image: resilio/sync
