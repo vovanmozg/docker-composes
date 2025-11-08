@@ -1,10 +1,10 @@
-# Nginx Reverse Proxy with automatic SSL generating
+# Nginx Reverse Proxy with Automatic SSL
 
-This is minimal nginx docker image with supporting ssl-sertificates.
+Minimal nginx docker image with automatic SSL certificate management.
 
-## 🚀 Quick start
+## 🚀 Quick Start
 
-Put your email to `docker-compose.yml`:
+### 1. Set your email in `docker-compose.yml`
 
 ```yaml
 environment:
@@ -14,11 +14,11 @@ environment:
 ### 2. Create nginx config
 
 ```bash
-copy data/conf.d/example-auto-ssl.conf.disabled data/conf.d/your-domain.com.conf
+cp data/conf.d/example-auto-ssl.conf.disabled data/conf.d/your-domain.com.conf
 ```
 
-Change every example.com with your-domain.com.
-Set proxy_pass to your backend server.
+Replace every `example.com` with `your-domain.com`.  
+Set `proxy_pass` to your backend server.
 
 ### 3. Run!
 
@@ -26,65 +26,69 @@ Set proxy_pass to your backend server.
 docker-compose up -d
 ```
 
-**Что произойдёт:**
-
-1. ⏱️ Контейнер запускается (~5 сек)
-2. 🔐 Создаются временные сертификаты
-3. ✅ Nginx работает (HTTPS доступен!)
-4. 📋 В фоне запрашиваются настоящие сертификаты Let's Encrypt
-5. 🔄 Nginx автоматически перезагружается с новыми сертификатами
-
-### 4. Проверка
+### 4. Verify
 
 ```bash
 # Check logs
 docker-compose logs -f nginx-ssl
 
-# Check https
+# Check HTTPS
 curl -I https://example.com
 ```
 
-## 📋 Требования для Let's Encrypt
+## 📋 Requirements for Let's Encrypt
 
-Чтобы получить настоящий сертификат:
+To obtain a real certificate:
 
-1. ✅ **Домен настроен:** A-запись указывает на ваш сервер
-2. ✅ **Порт 80 открыт:** Let's Encrypt проверяет через HTTP
-3. ✅ **CERT_EMAIL указан:** В docker-compose.yml
-4. ✅ **Location настроен:** `/.well-known/acme-challenge/` должен быть доступен
+1. ✅ **Domain is configured:** A-record points to your server
+2. ✅ **Port 80 is open:** Let's Encrypt validates via HTTP
+3. ✅ **CERT_EMAIL is set:** In docker-compose.yml
 
-### Автообновление:
+## 🔄 Auto-renewal
 
-Каждые 12 часов:
+Every 12 hours:
 
-- Проверяется срок действия сертификатов
-- Если < 30 дней до истечения → обновляется
-- Nginx автоматически перезагружается внутри контейнера
+- Certificate expiration dates are checked
+- If < 30 days until expiration → renewed
+- Nginx automatically reloads inside the container
 
-### Добавление нового домена
+## 📝 Adding a New Domain
 
 ```bash
+# 1. Create config
 nano conf.d/newdomain.conf
 
-# 2. Перезагрузите nginx
+# 2. Reload nginx
 docker-compose exec nginx-ssl nginx -s reload
 
-# Сертификат получится автоматически!
+# Certificate will be obtained automatically!
 ```
 
-### Проверка сертификатов
+## 🔍 Certificate Management
 
 ```bash
-# Список сертификатов
+# List certificates
 docker-compose exec nginx-ssl certbot certificates
 
-# Информация о сертификате
+# Certificate information
 docker-compose exec nginx-ssl openssl x509 -in /etc/letsencrypt/live/example.com/fullchain.pem -noout -text
 ```
 
-## 🎯 Преимущества решения
+## 🎯 Key Features
 
-✅ **Максимальная простота** — создал конфиг, запустил, готово  
-✅ **Автоматизация** — сертификаты получаются и обновляются сами  
-✅ **Нет даунтайма** — nginx работает всегда  
-✅ **Персистентность** — все конфиги и данные находятся в папах рядом с docker-compose.yml
+✅ **Maximum simplicity** — create config, run, done  
+✅ **Automation** — certificates are obtained and renewed automatically  
+✅ **No downtime** — nginx always running  
+✅ **Persistence** — all configs and data are stored in folders next to docker-compose.yml
+
+### What happens when you run the container?
+
+1. Container starts (~5 seconds)
+2. Temporary certificates are created
+3. Nginx is running (HTTPS is available!)
+4. Real Let's Encrypt certificates are requested in the background
+5. Nginx automatically reloads with new certificates
+
+## 🚀 Production Ready
+
+Ready for production use with automatic SSL certificate management!
