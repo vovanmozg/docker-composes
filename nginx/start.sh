@@ -34,6 +34,18 @@ for conf in /etc/nginx/conf.d/*.conf; do
     fi
 done
 
+# Create default self-signed certificate for unknown domains if not exists
+if [ ! -f /etc/nginx/ssl/default.crt ]; then
+    echo ""
+    echo "📝 Creating default self-signed certificate..."
+    mkdir -p /etc/nginx/ssl
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+        -keyout /etc/nginx/ssl/default.key \
+        -out /etc/nginx/ssl/default.crt \
+        -subj "/CN=default/O=Nginx Default" > /dev/null 2>&1
+    echo "✓ Default certificate created"
+fi
+
 echo ""
 echo "🔧 Testing nginx configuration..."
 if nginx -t 2>&1; then
