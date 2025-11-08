@@ -3,7 +3,6 @@ set -e
 
 echo "=== Nginx + Certbot Auto SSL Setup ==="
 
-# Функция для создания временного сертификата
 create_dummy_cert() {
     domain=$1
     cert_path="/etc/letsencrypt/live/$domain"
@@ -21,7 +20,7 @@ create_dummy_cert() {
     fi
 }
 
-# Сканируем конфиги и создаем временные сертификаты
+# Create dummy certificates for all SSL domains in nginx configs
 echo ""
 echo "🔍 Scanning nginx configs for SSL domains..."
 for conf in /etc/nginx/conf.d/*.conf; do
@@ -35,7 +34,6 @@ for conf in /etc/nginx/conf.d/*.conf; do
     fi
 done
 
-# Тестируем конфигурацию nginx
 echo ""
 echo "🔧 Testing nginx configuration..."
 if nginx -t 2>&1; then
@@ -45,9 +43,8 @@ else
     exit 1
 fi
 
-# Функция для получения настоящих сертификатов
 obtain_real_certs() {
-    sleep 5  # Даем nginx время запуститься
+    sleep 5  # Time to wait for nginx to start
     
     echo ""
     echo "🔐 Checking for real SSL certificates..."
@@ -68,22 +65,22 @@ obtain_real_certs() {
                 
                 cert_path="/etc/letsencrypt/live/$domain/fullchain.pem"
                 
-                # Проверяем, это временный сертификат или настоящий
                 if [ -f "$cert_path" ]; then
                     issuer=$(openssl x509 -in "$cert_path" -noout -issuer 2>/dev/null || echo "")
                     
-                    # Если это не Let's Encrypt сертификат, получаем настоящий
                     if ! echo "$issuer" | grep -q "Let's Encrypt"; then
                         echo ""
                         echo "📋 Requesting Let's Encrypt certificate for $domain..."
+                        
+                        echo "   Removing temporary certificate..."
+                        rm -rf "/etc/letsencrypt/live/$domain"
                         
                         if certbot certonly --webroot \
                             --webroot-path=/var/www/certbot \
                             -d "$domain" \
                             --email "$CERT_EMAIL" \
                             --agree-tos \
-                            --non-interactive \
-                            --force-renewal; then
+                            --non-interactive; then
                             echo "✓ Certificate obtained for $domain"
                         else
                             echo "⚠️  Failed to obtain certificate for $domain"
@@ -110,10 +107,8 @@ obtain_real_certs() {
     fi
 }
 
-# Получаем настоящие сертификаты в фоне
 obtain_real_certs &
 
-# Автообновление сертификатов каждые 12 часов
 echo ""
 echo "⏰ Certificate auto-renewal enabled (every 12 hours)"
 while :; do
@@ -128,7 +123,6 @@ while :; do
     fi
 done &
 
-# Главный процесс - nginx в foreground режиме
 echo ""
 echo "✅ Setup complete! Nginx is running."
 echo ""

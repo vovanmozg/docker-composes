@@ -1,33 +1,25 @@
-version: '3.8'
-
 services:
   nginx-ssl:
     image: vovan/nginx-ssl:latest
     container_name: nginx-ssl
     restart: unless-stopped
     ports:
-      - '80:80'
-      - '443:443'
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./conf.d:/etc/nginx/conf.d:ro
-      - letsencrypt-certs:/etc/letsencrypt
-      - certbot-webroot:/var/www/certbot
-      - ssl-certs:/etc/nginx/ssl
+      - ./data/conf.d:/etc/nginx/conf.d:ro
+      - ./data/letsencrypt-certs:/etc/letsencrypt
+      - ./data/certbot-webroot:/var/www/certbot
+      - ./data/ssl-certs:/etc/nginx/ssl
     environment:
       # Email для Let's Encrypt (Use your own email!)
       - CERT_EMAIL=admin@example.com
     networks:
       - proxy-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 networks:
   proxy-network:
     name: proxy-network
     driver: bridge
-
-volumes:
-  letsencrypt-certs:
-    name: letsencrypt-certs
-  certbot-webroot:
-    name: certbot-webroot
-  ssl-certs:
-    name: ssl-certs

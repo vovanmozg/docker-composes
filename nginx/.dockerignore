@@ -3,7 +3,6 @@
 
 *.md
 
-get-ssl-cert.sh
 build-and-push.sh
 
 conf.d/
