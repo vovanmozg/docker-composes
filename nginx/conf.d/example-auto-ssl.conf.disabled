@@ -1,12 +1,11 @@
-# Пример конфига для бэкэнда
-# Переименуйте в .conf чтобы активировать
+# Пример конфига с автоматическим получением SSL сертификата
 
 # HTTP -> HTTPS редирект
 server {
     listen 80;
     server_name example.com www.example.com;
 
-    # Location для certbot валидации
+    # Location для certbot валидации (обязательно!)
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
     }
@@ -22,7 +21,9 @@ server {
     listen 443 ssl http2;
     server_name example.com www.example.com;
 
-    # SSL сертификаты (замените на свои пути)
+    # SSL сертификаты (будут созданы автоматически!)
+    # При первом запуске используется временный сертификат
+    # Затем автоматически получается настоящий от Let's Encrypt
     ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
 

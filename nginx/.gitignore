@@ -1,14 +1,6 @@
-# SSL сертификаты и приватные ключи
-ssl/*.key
-ssl/*.crt
-ssl/*.pem
-certbot/conf/
-certbot/www/
-
-# Логи nginx (если будут монтироваться)
-logs/
-
 # Временные файлы
 *.tmp
 *.swp
 
+# Логи nginx (если будут монтироваться)
+logs/

@@ -1,10 +1,14 @@
 #!/bin/bash
 
-# Скрипт для получения SSL сертификата Let's Encrypt
+# Скрипт для ручного получения SSL сертификата Let's Encrypt
+# (обычно не нужен, так как сертификаты получаются автоматически)
 
 if [ $# -lt 2 ]; then
     echo "Использование: ./get-ssl-cert.sh <domain> <email> [additional-domains...]"
     echo "Пример: ./get-ssl-cert.sh example.com admin@example.com www.example.com"
+    echo ""
+    echo "Примечание: При использовании CERT_EMAIL в docker-compose.yml"
+    echo "            сертификаты получаются автоматически при запуске!"
     exit 1
 fi
 
@@ -24,14 +28,26 @@ echo "Дополнительные домены: $ADDITIONAL_DOMAINS"
 echo "Email: $EMAIL"
 echo ""
 
-# Запрос сертификата
-docker-compose run --rm certbot certonly \
+# Определяем имя контейнера
+CONTAINER=$(docker-compose ps -q nginx-ssl 2>/dev/null)
+if [ -z "$CONTAINER" ]; then
+    CONTAINER=$(docker-compose ps -q nginx 2>/dev/null)
+fi
+
+if [ -z "$CONTAINER" ]; then
+    echo "✗ Контейнер nginx не запущен"
+    echo "  Запустите: docker-compose up -d"
+    exit 1
+fi
+
+# Запрос сертификата через nginx контейнер
+docker-compose exec nginx-ssl certbot certonly \
   --webroot \
   --webroot-path=/var/www/certbot \
   $DOMAINS_CMD \
   --email $EMAIL \
   --agree-tos \
-  --no-eff-email
+  --non-interactive
 
 if [ $? -eq 0 ]; then
     echo ""
@@ -41,8 +57,9 @@ if [ $? -eq 0 ]; then
     echo "  ssl_certificate /etc/letsencrypt/live/$DOMAIN/fullchain.pem;"
     echo "  ssl_certificate_key /etc/letsencrypt/live/$DOMAIN/privkey.pem;"
     echo ""
-    echo "Не забудьте перезагрузить nginx:"
-    echo "  docker-compose exec nginx nginx -s reload"
+    echo "Перезагрузка nginx..."
+    docker-compose exec nginx-ssl nginx -s reload
+    echo "✓ Готово!"
 else
     echo ""
     echo "✗ Ошибка при получении сертификата"
