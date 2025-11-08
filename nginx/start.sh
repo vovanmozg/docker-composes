@@ -26,7 +26,7 @@ echo ""
 echo "🔍 Scanning nginx configs for SSL domains..."
 for conf in /etc/nginx/conf.d/*.conf; do
     if [ -f "$conf" ]; then
-        domains=$(grep -oP 'ssl_certificate\s+/etc/letsencrypt/live/\K[^/]+' "$conf" 2>/dev/null | sort -u || true)
+        domains=$(grep 'ssl_certificate' "$conf" 2>/dev/null | sed -n 's|.*ssl_certificate.*/etc/letsencrypt/live/\([^/]*\)/.*|\1|p' | sort -u || true)
         for domain in $domains; do
             if [ -n "$domain" ]; then
                 create_dummy_cert "$domain"
@@ -45,11 +45,6 @@ else
     exit 1
 fi
 
-# Запускаем nginx
-echo ""
-echo "🚀 Starting nginx..."
-nginx
-
 # Функция для получения настоящих сертификатов
 obtain_real_certs() {
     sleep 5  # Даем nginx время запуститься
@@ -65,7 +60,7 @@ obtain_real_certs() {
     
     for conf in /etc/nginx/conf.d/*.conf; do
         if [ -f "$conf" ]; then
-            domains=$(grep -oP 'ssl_certificate\s+/etc/letsencrypt/live/\K[^/]+' "$conf" 2>/dev/null | sort -u || true)
+            domains=$(grep 'ssl_certificate' "$conf" 2>/dev/null | sed -n 's|.*ssl_certificate.*/etc/letsencrypt/live/\([^/]*\)/.*|\1|p' | sort -u || true)
             for domain in $domains; do
                 if [ -z "$domain" ]; then
                     continue
@@ -88,13 +83,15 @@ obtain_real_certs() {
                             --email "$CERT_EMAIL" \
                             --agree-tos \
                             --non-interactive \
-                            --keep-until-expiring 2>&1 | grep -v "Hook command"; then
+                            --force-renewal; then
                             echo "✓ Certificate obtained for $domain"
                         else
                             echo "⚠️  Failed to obtain certificate for $domain"
-                            echo "   Make sure:"
-                            echo "   - Domain $domain points to this server"
-                            echo "   - Port 80 is accessible from the internet"
+                            echo "   Possible reasons:"
+                            echo "   - Invalid email address (use real email!)"
+                            echo "   - Domain $domain doesn't point to this server"
+                            echo "   - Port 80 is not accessible from the internet"
+                            echo "   Check logs: docker compose exec nginx-ssl cat /var/log/letsencrypt/letsencrypt.log"
                         fi
                     else
                         echo "✓ Valid Let's Encrypt certificate found for $domain"
