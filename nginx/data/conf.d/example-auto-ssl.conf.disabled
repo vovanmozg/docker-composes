@@ -1,46 +1,45 @@
-# Пример конфига с автоматическим получением SSL сертификата
+# Example config with automatic SSL certificate generation
 
-# HTTP -> HTTPS редирект
+# HTTP -> HTTPS redirect
 server {
     listen 80;
     server_name example.com;
     # server_name example.com www.example.com # You can use additional domains
 
-    # Location для certbot валидации (обязательно!)
+    # Location for certbot validation (required!)
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
     }
 
-    # Редирект на HTTPS
+    # Redirect to HTTPS
     location / {
         return 301 https://$host$request_uri;
     }
 }
 
-# HTTPS сервер
+# HTTPS server
 server {
     listen 443 ssl http2;
     server_name example.com;
     # server_name example.com www.example.com # You can use additional domains
 
-    # SSL сертификаты (будут созданы автоматически!)
-    # При первом запуске используется временный сертификат
-    # Затем автоматически получается настоящий от Let's Encrypt
+    # SSL certificates (will be created automatically!)
+    # On first run, temporary certificate is used
+    # Then real Let's Encrypt certificate is obtained automatically
     ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
 
-    # SSL настройки
+    # SSL settings
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
     ssl_prefer_server_ciphers on;
 
-    # Proxy к локальному бэкэнду
+    # Proxy to local backend
     location / {
-        proxy_pass http://host.docker.internal:3000;  # Замените порт на свой
+        proxy_pass http://host.docker.internal:3000;  # Replace port with yours
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
         proxy_cache_bypass $http_upgrade;
     }
 }
-
