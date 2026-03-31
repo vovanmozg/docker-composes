@@ -1,0 +1,8 @@
+services:
+  grafana-mcp:
+    image: grafana/mcp-grafana
+    ports:
+      - "8431:8000"
+    environment:
+      GRAFANA_URL: ${GRAFANA_URL:-http://host.docker.internal:3000}
+      GRAFANA_SERVICE_ACCOUNT_TOKEN: ${GRAFANA_TOKEN}

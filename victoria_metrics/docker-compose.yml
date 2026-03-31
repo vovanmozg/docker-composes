@@ -1,0 +1,13 @@
+services:
+  mcp-victoriametrics:
+    image: ghcr.io/victoriametrics/mcp-victoriametrics
+    container_name: mcp-victoriametrics
+    environment:
+      VM_INSTANCE_ENTRYPOINT: "${VM_INSTANCE_ENTRYPOINT}"
+      VM_INSTANCE_TYPE: "single"
+      VM_INSTANCE_HEADERS: "${VM_INSTANCE_HEADERS}"
+      MCP_SERVER_MODE: "sse"
+      MCP_LISTEN_ADDR: ":8430"
+    ports:
+      - "8430:8430"
+    restart: unless-stopped
