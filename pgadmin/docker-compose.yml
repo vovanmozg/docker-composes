@@ -10,5 +10,5 @@ services:
       - ./pgadmin:/var/lib/pgadmin
 
     ports:
-      - '8090:80'
+      - '127.0.0.1:8090:80'
     restart: unless-stopped
