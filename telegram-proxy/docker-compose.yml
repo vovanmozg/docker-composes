@@ -1,16 +1,10 @@
 services:
   mtproto-proxy:
-    image: telegrammessenger/proxy:latest
+    image: nineseconds/mtg:2
     container_name: mtproto-proxy
     restart: unless-stopped
     ports:
       - "127.0.0.1:9443:443"
-    volumes:
-      - proxy-config:/data
-    environment:
-      # 16 bytes hex, e.g. 00baadf00d15abad1deaa515baadcafe
-      # Set in .env file or auto-generated and saved to /data/secret
-      SECRET: "${SECRET}"
-
-volumes:
-  proxy-config:
+    # mtg secret (not interchangeable with old telegrammessenger/proxy hex):
+    #   docker run --rm nineseconds/mtg:2 generate-secret your.domain.tld
+    command: ["simple-run", "0.0.0.0:443", "${SECRET}"]
