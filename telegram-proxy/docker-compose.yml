@@ -1,0 +1,16 @@
+services:
+  mtproto-proxy:
+    image: telegrammessenger/proxy:latest
+    container_name: mtproto-proxy
+    restart: unless-stopped
+    ports:
+      - "8888:443"
+    volumes:
+      - proxy-config:/data
+    environment:
+      # 16 bytes hex, e.g. 00baadf00d15abad1deaa515baadcafe
+      # Set in .env file or auto-generated and saved to /data/secret
+      SECRET: "${SECRET}"
+
+volumes:
+  proxy-config:
