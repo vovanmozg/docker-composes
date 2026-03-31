@@ -5,6 +5,7 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:9443:443"
-    # mtg secret (not interchangeable with old telegrammessenger/proxy hex):
-    #   docker run --rm nineseconds/mtg:2 generate-secret your.domain.tld
+    # Secret hostname must match TLS SNI routed to this port in nginx stream
+    # (e.g. vpn_mux: cloudflare.com → 127.0.0.1:9443). Example:
+    #   docker run --rm nineseconds/mtg:2 generate-secret cloudflare.com
     command: ["simple-run", "0.0.0.0:443", "${SECRET}"]
